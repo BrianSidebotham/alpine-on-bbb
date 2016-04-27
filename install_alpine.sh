@@ -54,9 +54,12 @@ sudo mkdir -p /media/rootfs/
 
 sudo mount ${DISK}p1 /media/rootfs/
 
-sudo cp -rv ./boot /media/rootfs/
 sudo cp -rv ./apks /media/rootfs/boot/
 sudo cp -rv ./extlinux /media/rootfs/boot/
+
+if [ -f ./linux-grsec/kernel/deploy/boot/vmlinuz-4.4.8-grsec ]; then
+    sudo cp -rv ./linux-grsec/kernel/deploy/boot/* /media/rootfs/boot/
+fi
 
 sync
 sudo umount /media/rootfs
