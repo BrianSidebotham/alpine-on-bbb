@@ -24,8 +24,7 @@ if [ ! -d ${KERN_SOURCE_DIR} ]; then
     if [ ! -f ${KERNEL_BUILD_DIR}/${KERNEL_SOURCE_ARCHIVE} ]; then
         echo "Downloading GRSEC Patch"
         GRSEC_PATCH="grsec-4.1.18-3.1-201509201149-alpine.patch"
-        wget -c
-        http://dev.alpinelinux.org/~tteras/grsec/${GRSEC_PATCH}
+        wget -c http://dev.alpinelinux.org/~tteras/grsec/${GRSEC_PATCH}
     fi
 
     if [ ! -f ${KERN_SOURCE_DIR}/patched ]; then
