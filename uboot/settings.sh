@@ -16,6 +16,8 @@ ROOTFS_BUILD_DIR=${BASE}/rootfs
 ROOTFS_FILE=debian-8.4-bare-armhf-2016-04-22.tar.xz
 ROOTFS_URL=https://rcn-ee.com/rootfs/eewiki/barefs/${ROOTFS_FILE}
 
+# Use as many cores as we have available
+CORES=$(cat /proc/cpuinfo | grep processor | wc -l)
+
 # Export the compiler to use...
 export CC=arm-linux-gnueabihf-
-

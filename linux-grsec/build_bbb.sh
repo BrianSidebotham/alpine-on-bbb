@@ -1,6 +1,8 @@
 #!/bin/sh
 
-. ./settings.sh
+SCRIPTDIR=$(dirname $(readlink -f $0))
+
+. ${SCRIPTDIR}/settings.sh
 
 echo "Starting Build..."
 
@@ -63,7 +65,7 @@ make -j1 ARCH=arm CROSS_COMPILE=${CC} modules_install firmware_install DISABLE_P
     INSTALL_PATH=${KERNEL_DEPLOY}/firmware
 
 mv ${KERNEL_DEPLOY}/modules/lib ${KERNEL_DEPLOY}/boot/modloop/modules
-mksquashfs ${KERNEL_DEPLOY}/boot/modloop ${KERNEL_DEPLOY}/boot/modloog-4.4.8-grsec -comp xz
+mksquashfs ${KERNEL_DEPLOY}/boot/modloop ${KERNEL_DEPLOY}/boot/modloop-4.4.8-grsec -comp xz
 rm -rf ${KERNEL_DEPLOY}/boot/modloop
 
 # TODO: Make initramfs to suit

@@ -1,6 +1,8 @@
 #!/bin/sh
 
-. ./settings.sh
+SCRIPTDIR=$(dirname $(readlink -f $0))
+
+. ${SCRIPTDIR}/settings.sh
 
 echo "Starting Build..."
 
@@ -19,7 +21,7 @@ git checkout v${UBOOT_VERSION} -b tmp
 echo "Building u-boot..."
 make ARCH=arm CROSS_COMPILE=${CC} distclean
 make ARCH=arm CROSS_COMPILE=${CC} am335x_boneblack_config
-make ARCH=arm CROSS_COMPILE=${CC}
+make ARCH=arm CROSS_COMPILE=${CC} -j${CORES}
 
 # u-boot is build
 exit 0
