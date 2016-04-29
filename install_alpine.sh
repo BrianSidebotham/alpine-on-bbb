@@ -67,7 +67,13 @@ sudo cp -rv ./extlinux /media/rootfs/boot/
 # Copy the kernel release over to the SD Card image
 sudo cp -rv ./linux-grsec/kernel/deploy/boot/* /media/rootfs/boot/
 
+# TODO: Fix the ramfs which isn't yet built here
+sudo cp -v ./initramfs-grsec /media/rootfs/boot/
+
 sync
 sudo umount /media/rootfs
+
+# Remove the disk we've used
+sudo losetup -d ${DISK}
 
 exit 0
