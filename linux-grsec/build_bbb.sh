@@ -47,6 +47,11 @@ make ARCH=arm CROSS_COMPILE=${CC} menuconfig DISABLE_PAX_PLUGINS=y
 #make -j${CORES} ARCH=arm CROSS_COMPILE=${CC} silentoldconfig DISABLE_PAX_PLUGINS=y
 make -j${CORES} ARCH=arm CROSS_COMPILE=${CC} DISABLE_PAX_PLUGINS=y
 
+if [ $? -ne 0 ]; then
+    echo "Kernel failed to compile properly!"
+    exit 1
+fi
+
 KERNEL_DEPLOY=${KERN_BUILD_DIR}/deploy
 rm -rf ${KERNEL_DEPLOY}
 mkdir -p ${KERNEL_DEPLOY}/boot/dtbs
