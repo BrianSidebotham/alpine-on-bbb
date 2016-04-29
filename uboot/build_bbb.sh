@@ -1,7 +1,6 @@
 #!/bin/sh
 
 SCRIPTDIR=$(dirname $(readlink -f $0))
-
 . ${SCRIPTDIR}/settings.sh
 
 echo "Starting Build..."

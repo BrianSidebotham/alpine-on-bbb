@@ -1,6 +1,7 @@
 #!/bin/sh
 
-VERSION=x.x.x
+SCRIPTDIR=$(dirname $(readlink -f $0))
+. ${SCRIPTDIR}/settings.sh
 
 # The size of the card image in MiB
 IMAGE_SIZE=256
@@ -30,10 +31,10 @@ if [ ! -f uboot/u-boot/u-boot-git/MLO ]; then
 fi
 
 # Check the linux build is complete, otherwise attempt to build it now...
-if [ ! -f ./linux-grsec/kernel/deploy/boot/vmlinuz-4.4.8-grsec ]; then
+if [ ! -f ./linux-grsec/kernel/deploy/boot/vmlinuz-grsec ]; then
     echo "The kernel has not been built, building now..."
     linux-grsec/build_bbb.sh
-    if [ ! -f ./linux-grsec/kernel/deploy/boot/vmlinuz-4.4.8-grsec ]; then
+    if [ ! -f ./linux-grsec/kernel/deploy/boot/vmlinuz-grsec ]; then
         echo "The kernel didn't built. Awww shucks!"
         exit 1
     fi
