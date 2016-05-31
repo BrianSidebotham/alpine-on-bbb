@@ -3,8 +3,11 @@
 SCRIPTDIR=$(dirname $(readlink -f $0))
 . ${SCRIPTDIR}/settings.sh
 
+# Define whether we build or download alpine
+BUILD=0
+
 # The size of the card image in MiB
-IMAGE_SIZE=256
+IMAGE_SIZE=64
 IMAGE_NAME=./alpine-${VERSION}.img
 
 # Create an image file of appropriate size
@@ -20,29 +23,46 @@ if [ "N" = "N${DISK}" ]; then
     exit 1
 fi
 
-# Make sure u-boot has been built, otherwise build it now
-if [ ! -f uboot/u-boot/u-boot-git/MLO ]; then
-    echo "u-boot has not been built, building now..."
-    uboot/build_bbb.sh
+if [ ${BUILD} -eq 1 ]; then
+
+    # Make sure u-boot has been built, otherwise build it now
     if [ ! -f uboot/u-boot/u-boot-git/MLO ]; then
-        echo "u-boot did not build successfully!"
-        exit 1
+        echo "u-boot has not been built, building now..."
+        uboot/build_bbb.sh
+        if [ ! -f uboot/u-boot/u-boot-git/MLO ]; then
+            echo "u-boot did not build successfully!"
+            exit 1
+        fi
     fi
-fi
 
-# Check the linux build is complete, otherwise attempt to build it now...
-if [ ! -f ./linux-grsec/kernel/deploy/boot/vmlinuz-grsec ]; then
-    echo "The kernel has not been built, building now..."
-    linux-grsec/build_bbb.sh
+    # Check the linux build is complete, otherwise attempt to build it now...
     if [ ! -f ./linux-grsec/kernel/deploy/boot/vmlinuz-grsec ]; then
-        echo "The kernel didn't built. Awww shucks!"
-        exit 1
+        echo "The kernel has not been built, building now..."
+        linux-grsec/build_bbb.sh
+        if [ ! -f ./linux-grsec/kernel/deploy/boot/vmlinuz-grsec ]; then
+            echo "The kernel didn't built. Awww shucks!"
+            exit 1
+        fi
     fi
-fi
 
-# The u-boot binaries we're going to boot from
-uboot_MLO=./uboot/u-boot/u-boot-git/MLO
-uboot_img=./uboot/u-boot/u-boot-git/u-boot.img
+    # The u-boot binaries we're going to boot from
+    uboot_MLO=${SCRIPTDIR}/build/u-boot/am335x_boneblack/MLO
+    uboot_img=${SCRIPTDIR}/build/u-boot/am335x_boneblack/u-boot.img
+
+else
+
+    echo "Downloading Alpine ${VERSION}"
+
+    mkdir -p ${SCRIPTDIR}/build/dl
+    wget -P ${SCRIPTDIR}/build/dl -c http://dl-cdn.alpinelinux.org/alpine/v3.4/releases/armhf/alpine-uboot-3.4.0-armhf.tar.gz
+    cd ${SCRIPTDIR}/build
+    tar -xzf ${SCRIPTDIR}/build/dl/alpine-uboot-3.4.0-armhf.tar.gz
+
+    # The u-boot binaries we're going to boot from
+    uboot_MLO=${SCRIPTDIR}/build/u-boot/am335x_boneblack/MLO
+    uboot_img=${SCRIPTDIR}/build/u-boot/am335x_boneblack/u-boot.img
+
+fi
 
 # See: http://elinux.org/Beagleboard:U-boot_partitioning_layout_2.0
 # The above is a bit out of date though, as u-boot can now handle ext4 filesystems so long as
@@ -62,14 +82,9 @@ sudo mkfs.ext4 -O ^has_journal ${DISK}p1 -L rootfs
 sudo mkdir -p /media/rootfs/
 sudo mount ${DISK}p1 /media/rootfs/
 
-sudo cp -rv ./apks /media/rootfs/boot/
-sudo cp -rv ./extlinux /media/rootfs/boot/
-
-# Copy the kernel release over to the SD Card image
-sudo cp -rv ./linux-grsec/kernel/deploy/boot/* /media/rootfs/boot/
-
-# TODO: Fix the ramfs which isn't yet built here
-sudo cp -v ./initramfs-grsec /media/rootfs/boot/
+sudo cp -rv ${SCRIPTDIR}/build/boot /media/rootfs/
+sudo cp -rv ${SCRIPTDIR}/build/apks /media/rootfs/boot/
+sudo cp -rv ${SCRIPTDIR}/build/extlinux /media/rootfs/boot/
 
 sync
 sudo umount /media/rootfs
