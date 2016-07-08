@@ -59,7 +59,7 @@ fi
 echo "Building the kernel..."
 cd ${KERN_SOURCE_DIR}
 #make ARCH=arm CROSS_COMPILE=${CC} distclean DISABLE_PAX_PLUGINS=y LOCALVERSION=-grsec
-cp -v ${BASE}/config-grsec.armhf ${KERN_SOURCE_DIR}/.config LOCALVERSION=-grsec
+cp -v ${BASE}/config-grsec.armhf ${KERN_SOURCE_DIR}/.config
 #cp -v ${BASE}/config-grsec.bbb ${KERN_SOURCE_DIR}/.config
 #make ARCH=arm CROSS_COMPILE=${CC} omap2plus_defconfig DISABLE_PAX_PLUGINS=y LOCALVERSION=-grsec
 #make ARCH=arm CROSS_COMPILE=${CC} silentoldconfig DISABLE_PAX_PLUGINS=y
